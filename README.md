@@ -41,8 +41,8 @@ In test sessions, 16–17 of the 20 frauds were blocked with 0–1 false alarms,
 ## Run it locally
 
 ```bash
-git clone https://github.com/vighnesh-shetty-vs/Real-Time-Financial-Fraud-Detection-Engine.git
-cd Real-Time-Financial-Fraud-Detection-Engine
+git clone https://github.com/vighnesh-shetty-vs/card-fraud-detection-xgboost-shap.git
+cd card-fraud-detection-xgboost-shap
 pip install -r requirements.txt
 streamlit run app.py
 ```
