@@ -20,6 +20,22 @@ Only 0.17% of the transactions in this dataset are fraud (492 of 284,807). A mod
 
 In test sessions, 16–17 of the 20 frauds were blocked with 0–1 false alarms, and `V14` was the dominant driver, consistent with common analyses of this dataset.
 
+## Evaluation on the full test set
+
+`python evaluate.py` scores all 56,962 held-out transactions (98 frauds). Full output: [reports/metrics.md](reports/metrics.md).
+
+- **PR-AUC 0.859.** A random model scores 0.0017; for a 0.17% event, this is the metric that matters.
+
+| Threshold | Frauds caught | Recall | Precision | False alarms | Fraud value caught |
+|---|---|---|---|---|---|
+| 0.5 (app default) | 83 / 98 | 84.7% | 72.8% | 31 | 64.0% |
+| 0.9 | 80 / 98 | 81.6% | 89.9% | 9 | 63.1% |
+| Rule baseline: block amounts > 1,012 | 1 / 98 | 1.0% | 0.2% | 599 | 17.0% |
+
+**What this shows:**
+- Raising the threshold from 0.5 to 0.9 cuts false alarms from 31 to 9 and loses only 3 frauds.
+- The model catches 85% of fraud cases but only 64% of fraud **value**, so it misses some of the largest frauds. The next step is cost-sensitive training that weights each fraud by its amount.
+
 ![Transaction archive with predictions and actual labels](assets/image_3.png)
 
 ## Run it locally
@@ -36,7 +52,7 @@ streamlit run app.py
 ## Limits and next steps
 
 - The model trains when the app starts. A production version would train offline, save the model, and report precision, recall and PR-AUC on the full test set.
-- The decision threshold is XGBoost's default 0.5. Choosing it from the business cost of a missed fraud vs a blocked customer would be the next step.
+- The decision threshold is XGBoost's default 0.5. The evaluation above shows 0.9 is a better trade-off; the final choice should come from the cost of a missed fraud vs a blocked customer.
 - "Real-time" here means scoring one transaction at a time in the UI (single-digit milliseconds), not a streaming pipeline.
 
 ---
